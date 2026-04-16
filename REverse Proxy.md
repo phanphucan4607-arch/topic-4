@@ -35,3 +35,59 @@ mv /root/source_wp /var/www/wp.phucan.vietnix.tech
 
  Đưa các file SQL vào khu vực dự phòng trước khi nạp
 mv /root/*.sql /var/www/database_backups/
+
+
+đổi port
+<img width="923" height="947" alt="image" src="https://github.com/user-attachments/assets/9e0d0871-9c61-47c9-b56a-ffa5a5fe6d61" />
+
+
+restart dịch vụ và kiểm tra TRẠNG THÁI 
+<img width="920" height="339" alt="image" src="https://github.com/user-attachments/assets/a2a0ea54-cc30-45e5-9716-d66e63bf2bbb" />
+
+nội dung file  /etc/apache2/sites-available/wp.phucan.vietnix.tech.conf:
+1. Cấu hình cho WordPress (Cổng 8080 và 8443)
+
+<img width="919" height="955" alt="image" src="https://github.com/user-attachments/assets/ff843efa-22ac-4be2-9606-25bf1b257f02" />
+
+Bước 2: Thiết lập Virtual Host cho Laravel
+
+1. Mở file cấu hình mới:
+Bash
+
+sudo nano /etc/apache2/sites-available/laravel.phucan.vietnix.tech.conf
+
+2. Dán nội dung cấu hình sau:
+Apache
+
+# --- LUỒNG HTTP (Cổng 8080) ---
+<VirtualHost *:8080>
+    ServerName laravel.phucan.vietnix.tech
+    DocumentRoot /var/www/laravel.phucan.vietnix.tech/public
+    
+    <Directory /var/www/laravel.phucan.vietnix.tech/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+# --- LUỒNG HTTPS (Cổng 8443) ---
+<VirtualHost *:8443>
+    ServerName laravel.phucan.vietnix.tech
+    DocumentRoot /var/www/laravel.phucan.vietnix.tech/public
+    
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/laravel.phucan.vietnix.tech/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/laravel.phucan.vietnix.tech/privkey.pem
+    
+    <Directory /var/www/laravel.phucan.vietnix.tech/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+
+
+<img width="919" height="955" alt="image" src="https://github.com/user-attachments/assets/79e0a870-025f-4512-8947-46b01af59ed1" />
+
+
+
