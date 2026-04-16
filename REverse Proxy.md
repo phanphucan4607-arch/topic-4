@@ -1,28 +1,37 @@
-## **Chuẩn bị Source Code**
-```
-scp /home/an/Downloads/source_wp.zip root@221.132.21.141:/var/www/
-scp /home/an/Downloads/laravel_source.zip root@221.132.21.141:/var/www/
-```
-**Tại vps**
-```
-cd /var/www/
-unzip source_wp.zip && mv source_wp wordpress
-unzip laravel_source.zip && mv laravel_source laravel
-chown -R www-data:www-data /var/www/
-rm *.zip
-```
-Đổi cổng: sudo nano /etc/apache2/ports.conf
-Sửa Listen 80 thành Listen 8080.
+Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai
 
-Kiểm tra:
+Đây là mô hình kinh điển giúp tối ưu hiệu năng:
 
-<img width="942" height="420" alt="image" src="https://github.com/user-attachments/assets/ee6a6b17-21aa-4b28-9da3-141d049c9d2e" />
+    Nginx (Người gác cổng): Cực kỳ nhanh trong việc xử lý hàng ngàn người truy cập cùng lúc và các file tĩnh (ảnh, video). Nginx sẽ đứng ở "tiền tuyến" (Cổng 80/443).
 
+    Apache (Người thợ lành nghề): Rất giỏi xử lý các logic phức tạp của PHP thông qua các file cấu hình .htaccess. Apache sẽ đứng ở "hậu phương" (Cổng 8080).
 
-<img width="930" height="984" alt="image" src="https://github.com/user-attachments/assets/184f3191-44fa-452a-aa87-135244bb7a96" />
+    Kết quả: Hệ thống vừa nhanh, vừa ổn định, không lo bị quá tải khi có nhiều khách truy cập.
+    Nhằm xây dựng một hạ tầng web server tối ưu về hiệu suất và tính bảo mật, tôi tiến hành triển khai mô hình Hybrid Web Server sử dụng Nginx làm Reverse Proxy đứng trước để điều phối lưu lượng và Apache làm Backend xử lý mã nguồn. Quy trình được thực hiện từ bước đồng bộ hóa dữ liệu qua giao thức SCP, thiết lập VirtualHost đa nhiệm cho WordPress và Laravel, đồng thời cấu hình bảo mật chặn truy cập trực tiếp qua IP máy chủ.
 
-<img width="930" height="984" alt="image" src="https://github.com/user-attachments/assets/13cd3056-7c72-4b71-9c50-d2dd203accb0" />
+    Bước 1: Đẩy mã nguồn và Database lên VPS
 
+(Chạy trên Terminal máy cậu - Máy An)
+Bash
 
-<img width="908" height="841" alt="image" src="https://github.com/user-attachments/assets/0ba03b8b-b14f-4d07-947a-693ea3a9fb02" />
+# Đẩy mã nguồn WordPress & Laravel
+# Đẩy các file cơ sở dữ liệu
+<img width="916" height="63" alt="image" src="https://github.com/user-attachments/assets/14ec1969-ffa2-48cd-a988-02f8fd54b7d7" />
 
+Quy hoạch hạ tầng thư mục (System Architecture)
+
+Sau khi dữ liệu đã được đẩy lên vùng đệm /root/, chúng ta tiến hành đưa chúng về "nhà mới" tại /var/www/. Việc đặt tên thư mục theo tên miền giúp quản trị nhiều dự án mà không bị nhầm lẫn.
+Bash
+
+ Đăng nhập vào VPS (Sử dụng IP .141 của bạn)
+ssh root@221.132.21.141
+
+ Tạo không gian lưu trữ chuyên nghiệp
+mkdir -p /var/www/database_backups
+
+ Di chuyển và định danh lại mã nguồn (Sửa lỗi source_wq -> source_wp)
+mv /root/laravel_source /var/www/laravel.phucan.vietnix.tech
+mv /root/source_wp /var/www/wp.phucan.vietnix.tech
+
+ Đưa các file SQL vào khu vực dự phòng trước khi nạp
+mv /root/*.sql /var/www/database_backups/
