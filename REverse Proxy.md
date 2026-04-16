@@ -163,9 +163,7 @@ sudo a2ensite laravel.phucan.vietnix.tech.conf
 # 3. Kiểm định tính toàn vẹn của cú pháp (Bắt buộc)
 sudo apache2ctl configtest
 
-
-
-<img width="919" height="955" alt="image" src="https://github.com/user-attachments/assets/79e0a870-025f-4512-8947-46b01af59ed1" />
+<img width="884" height="797" alt="image" src="https://github.com/user-attachments/assets/d626e172-07fb-4741-969d-f9423a8014f8" />
 
 
 Chúng ta sẽ thiết lập Nginx làm lớp bảo vệ phía trước, xử lý SSL và file tĩnh, sau đó mới đẩy yêu cầu "khó" (PHP) xuống cho Apache.
@@ -314,5 +312,93 @@ sudo systemctl restart nginx
 
 <img width="1817" height="957" alt="image" src="https://github.com/user-attachments/assets/819f5936-b620-4adc-9f2a-dc8ad8718b05" />
 
+1. Nginx "ôm" hết việc nhẹ (Xử lý file tĩnh)
 
+    Cách làm: Trong file cấu hình, ông thấy đoạn location ~* \.(jpg|jpeg|png...)$.
 
+    Giải thích: Khi khách vào xem web, nếu họ chỉ cần xem cái ảnh hay file CSS, Nginx nó tự vào thư mục code (root /var/www/...) lấy đưa cho khách luôn. Nó không thèm hỏi thằng Apache làm gì cho mất công.
+
+    Lợi ích: Server chạy cực nhanh vì Apache không phải lo mấy cái việc vặt vãnh này, chỉ tập trung "nấu" PHP thôi.
+
+2. Luồng dữ liệu "ai đi đường nấy" (Song song HTTP/HTTPS)
+
+    Cách làm: Ông viết 2 khối server {} riêng biệt. Một cái nghe cổng 80 (HTTP), một cái nghe cổng 443 (HTTPS).
+
+    Giải thích: * Nếu khách vào bằng HTTP (không bảo mật), Nginx sẽ "dẫn" họ xuống Apache cổng 8080.
+
+        Nếu khách vào bằng HTTPS (có ổ khóa xanh), Nginx sẽ "dẫn" họ xuống Apache cổng 8443.
+
+    Tại sao không dùng 301? Thường người ta hay ép khách từ 80 sang 443 (return 301), nhưng sếp ông yêu cầu không chuyển hướng cưỡng bức. Nghĩa là khách muốn vào kiểu gì thì ông chiều kiểu đó, giữ nguyên giao thức để test hoặc theo yêu cầu riêng của dự án.
+   
+------
+🛡️ THIẾT LẬP "TẤM KHIÊN" DEFAULT VHOST (CHẶN IP & DOMAIN RÁC)
+1. Tại sao ông bắt buộc phải làm bước này? (Lý thuyết)
+
+    Tình huống: Nếu ông không làm, khi ai đó trỏ một cái tên miền vớ vẩn (ví dụ: web-rac.com) về IP của ông, Nginx sẽ "lú lẫn" và hiển thị đại một trong hai trang của ông lên.
+
+    Hậu quả: Google sẽ phạt lỗi Duplicate Content (trùng lặp nội dung), làm tụt hạng SEO. Tệ hơn, hacker có thể quét IP để tìm lỗ hổng của server nếu ông để lộ giao diện mặc định.
+
+    Giải pháp: Xây một cái "phòng bảo vệ" để bắt hết những thằng đi lạc và đuổi thẳng cổ bằng lỗi 403 Forbidden
+
+    sudo nano /etc/nginx/sites-available/default
+
+   xóa hết đống cũ đi, dán đúng đoạn này vào cho tôi. Tôi đã dùng chứng chỉ SSL của trang wp.phucan để làm "giấy thông hành" tạm thời cho khối HTTPS:
+
+```
+# --- KHỐI 1: CHẶN TRUY CẬP HTTP (CỔNG 80) ---
+server {
+    listen 80 default_server;
+    server_name _; # Dấu gạch dưới nghĩa là "bất cứ ai không có tên trong danh sách"
+    
+    # Đuổi thẳng cổ
+    return 403; 
+}
+
+# --- KHỐI 2: CHẶN TRUY CẬP HTTPS (CỔNG 443) ---
+server {
+    listen 443 ssl default_server;
+    server_name _;
+
+    # Nginx cần chứng chỉ để "nói chuyện" với khách trước khi đuổi khách đi.
+    # Ta dùng tạm chứng chỉ của WordPress đã có sẵn trên máy ông.
+    ssl_certificate /etc/letsencrypt/live/wp.phucan.vietnix.tech/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/wp.phucan.vietnix.tech/privkey.pem;
+
+    return 403;
+}
+```
+default_server: Đây là lệnh ưu tiên cao nhất. Ông đang dặn Nginx: "Nếu có thằng nào vào mà tên miền không khớp với file wp.phucan hay laravel.phucan, thì cứ ném hết nó vào đây cho tôi xử lý".
+
+server_name _: Cái dấu gạch dưới này là một "biến ảo". Nó đại diện cho việc truy cập bằng IP trực tiếp hoặc những tên miền "râu ông nọ cắm cằm bà kia".
+
+return 403: Đây là mã lỗi "Cấm vào". Nó nhẹ hơn lỗi 500 nhưng cực kỳ uy lực để chặn đứng các cuộc dò quét tự động.
+
+```
+sudo nginx -t  # Kiểm tra xem có gõ nhầm dấu nào không
+sudo systemctl restart nginx
+```
+```
+-- 1. Cập nhật tên miền chính cho Website
+UPDATE Sa3QIZ_options SET option_value = 'https://wp.phucan.vietnix.tech' WHERE option_name = 'home' OR option_name = 'siteurl';
+
+-- 2. Thay link cũ trong toàn bộ nội dung bài viết (giúp hiện ảnh và link đúng)
+UPDATE Sa3QIZ_posts SET post_content = REPLACE(post_content, 'https://linhlt.id.vn', 'https://wp.phucan.vietnix.tech');
+
+-- 3. Thay link cũ trong các đường dẫn tĩnh (GUID)
+UPDATE Sa3QIZ_posts SET guid = REPLACE(guid, 'https://linhlt.id.vn', 'https://wp.phucan.vietnix.tech');
+
+-- 4. Thay link cũ trong các trường dữ liệu mở rộng (Metadata)
+UPDATE Sa3QIZ_postmeta SET meta_value = REPLACE(meta_value, 'https://linhlt.id.vn', 'https://wp.phucan.vietnix.tech');
+```
+
+Đây là bộ lệnh Search & Replace (Tìm và Thay thế) đồng loạt để "thay máu" toàn bộ dữ liệu. Vì WordPress lưu link tuyệt đối (có kèm tên miền) ở khắp mọi nơi, nên khi ông "chuyển nhà" sang server mới, ông phải dùng SQL để ép hệ thống đổi từ tên miền cũ sang tên miền mới.
+
+Cụ thể, bộ lệnh này xử lý 3 tầng dữ liệu:
+
+    Tầng cấu hình (Bảng options): Sửa lại "hộ khẩu" để WordPress biết nó đang chạy trên tên miền mới, tránh bị tự động đá về web cũ.
+
+    Tầng nội dung (Bảng posts & guid): Sửa lại toàn bộ link ảnh và link bài viết trong các bài đăng. Nếu không có bước này, ảnh sẽ bị lỗi (không hiện) và khi bấm vào menu nó sẽ nhảy sang trang của Leader.
+
+    Tầng giao diện (Bảng postmeta): Quét sạch các link cũ còn sót lại trong cài đặt của Theme (như ảnh Logo, Banner, Slider).
+
+Mục đích cuối cùng: Làm cho website hoạt động nhất quán trên tên miền mới phucan.vietnix.tech mà không cần phải ngồi sửa tay hàng nghìn bài viết.
