@@ -12,10 +12,10 @@ Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai
     Bước 1: Đẩy mã nguồn và Database lên VPS
 
 (Chạy trên Terminal máy cậu - Máy An)
-Bash
 
-# Đẩy mã nguồn WordPress & Laravel
-# Đẩy các file cơ sở dữ liệu
+
+Đẩy mã nguồn WordPress & Laravel
+ Đẩy các file cơ sở dữ liệu
 <img width="916" height="63" alt="image" src="https://github.com/user-attachments/assets/14ec1969-ffa2-48cd-a988-02f8fd54b7d7" />
 
 Quy hoạch hạ tầng thư mục (System Architecture)
