@@ -16,3 +16,5 @@ Sửa Listen 80 thành Listen 8080.
 
 <img width="942" height="420" alt="image" src="https://github.com/user-attachments/assets/ee6a6b17-21aa-4b28-9da3-141d049c9d2e" />
 
+<img width="908" height="841" alt="image" src="https://github.com/user-attachments/assets/0ba03b8b-b14f-4d07-947a-693ea3a9fb02" />
+
