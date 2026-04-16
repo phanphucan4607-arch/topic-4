@@ -168,4 +168,151 @@ sudo apache2ctl configtest
 <img width="919" height="955" alt="image" src="https://github.com/user-attachments/assets/79e0a870-025f-4512-8947-46b01af59ed1" />
 
 
+Chúng ta sẽ thiết lập Nginx làm lớp bảo vệ phía trước, xử lý SSL và file tĩnh, sau đó mới đẩy yêu cầu "khó" (PHP) xuống cho Apache.
+1. Cấu hình Virtual Host cho WordPress (Century Auto)
+
+Thao tác:sudo nano /etc/nginx/sites-available/wp.phucan.vietnix.tech
+```
+# --- KHỐI 1: XỬ LÝ HTTP (CỔNG 80) ➡️ APACHE 8080 ---
+server {
+    listen 80;
+    server_name wp.phucan.vietnix.tech;
+    
+    root /var/www/wp.phucan.vietnix.tech;
+    index index.php index.html index.htm;
+
+    # Kiểm tra file tĩnh trước, nếu không thấy thì đẩy sang Apache
+    location / {
+        try_files $uri $uri/ @apache_http;
+    }
+
+    # TỐI ƯU: Nginx tự xử lý file tĩnh, giảm tải cho Apache
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|woff|woff2|ttf|svg|eot)$ {
+        try_files $uri @apache_http; 
+        expires 30d;
+        access_log off;
+    }
+
+    # Proxy sang Apache HTTP
+    location @apache_http {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# --- KHỐI 2: XỬ LÝ HTTPS (CỔNG 443) ➡️ APACHE 8443 ---
+server {
+    listen 443 ssl;
+    server_name wp.phucan.vietnix.tech;
+    
+    root /var/www/wp.phucan.vietnix.tech;
+
+    ssl_certificate /etc/letsencrypt/live/wp.phucan.vietnix.tech/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/wp.phucan.vietnix.tech/privkey.pem;
+
+    location / {
+        try_files $uri $uri/ @apache_https;
+    }
+
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|woff|woff2|ttf|svg|eot)$ {
+        try_files $uri @apache_https;
+        expires 30d;
+        access_log off;
+    }
+
+    # Proxy sang Apache HTTPS
+    location @apache_https {
+        proxy_pass https://127.0.0.1:8443;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_ssl_verify off; 
+    }
+}
+```
+
+**Cấu hình Virtual Host cho Laravel (Coza Store)**
+sudo nano /etc/nginx/sites-available/laravel.phucan.vietnix.tech
+```
+# --- KHỐI 1: XỬ LÝ HTTP (CỔNG 80) ➡️ APACHE 8080 ---
+server {
+    listen 80;
+    server_name laravel.phucan.vietnix.tech;
+    
+    # Laravel bắt buộc root phải trỏ vào /public
+    root /var/www/laravel.phucan.vietnix.tech/public;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ @apache_http;
+    }
+
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|woff|woff2|ttf|svg|eot)$ {
+        try_files $uri @apache_http;
+        expires 30d;
+        access_log off;
+    }
+
+    location @apache_http {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# --- KHỐI 2: XỬ LÝ HTTPS (CỔNG 443) ➡️ APACHE 8443 ---
+server {
+    listen 443 ssl;
+    server_name laravel.phucan.vietnix.tech;
+    
+    root /var/www/laravel.phucan.vietnix.tech/public;
+
+    ssl_certificate /etc/letsencrypt/live/laravel.phucan.vietnix.tech/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/laravel.phucan.vietnix.tech/privkey.pem;
+
+    location / {
+        try_files $uri $uri/ @apache_https;
+    }
+
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|woff|woff2|ttf|svg|eot)$ {
+        try_files $uri @apache_https;
+        expires 30d;
+        access_log off;
+    }
+
+    location @apache_https {
+        proxy_pass https://127.0.0.1:8443;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_ssl_verify off;
+    }
+}
+
+```
+Kích hoạt và Kiểm tra
+
+Sau khi lưu file, cậu cần tạo liên kết (symlink) và khởi động lại Nginx:
+
+kíchkích hoạt cấu hình
+
+sudo ln -s /etc/nginx/sites-available/wp.phucan.vietnix.tech /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/laravel.phucan.vietnix.tech /etc/nginx/sites-enabled/
+
+Kiểm tra lỗi cú pháp (Bắt buộc)
+sudo nginx -t
+
+Nếu báo "syntax is ok", hãy restart Nginx
+sudo systemctl restart nginx
+
+<img width="1817" height="957" alt="image" src="https://github.com/user-attachments/assets/819f5936-b620-4adc-9f2a-dc8ad8718b05" />
+
+
 
