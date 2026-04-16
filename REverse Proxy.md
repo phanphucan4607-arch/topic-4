@@ -163,6 +163,38 @@ sudo a2ensite laravel.phucan.vietnix.tech.conf
 # 3. Kiểm định tính toàn vẹn của cú pháp (Bắt buộc)
 sudo apache2ctl configtest
 
+CÁCH THIẾT LẬP "TẤM KHIÊN" TRÊN NGINX
+
+Ép Nginx nhận cấu hình mới (Cực mạnh)
+**Sửa lại file default cho chắc (Copy y xì đoạn dưới này)**
+sudo nano /etc/nginx/sites-available/default
+
+```
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    return 403;
+}
+
+server {
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+    server_name _;
+
+    # Ông mượn tạm SSL của thằng WP để nó không báo lỗi khi khởi động
+    ssl_certificate /etc/letsencrypt/live/wp.phucan.vietnix.tech/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/wp.phucan.vietnix.tech/privkey.pem;
+
+    return 403;
+}
+```
+
+```
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
 <img width="884" height="797" alt="image" src="https://github.com/user-attachments/assets/d626e172-07fb-4741-969d-f9423a8014f8" />
 
 
@@ -402,3 +434,6 @@ Cụ thể, bộ lệnh này xử lý 3 tầng dữ liệu:
     Tầng giao diện (Bảng postmeta): Quét sạch các link cũ còn sót lại trong cài đặt của Theme (như ảnh Logo, Banner, Slider).
 
 Mục đích cuối cùng: Làm cho website hoạt động nhất quán trên tên miền mới phucan.vietnix.tech mà không cần phải ngồi sửa tay hàng nghìn bài viết.
+
+<img width="1842" height="998" alt="image" src="https://github.com/user-attachments/assets/9bc9b12f-04eb-4745-80a0-7f24380f0ed4" />
+
