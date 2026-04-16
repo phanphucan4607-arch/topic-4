@@ -86,6 +86,84 @@ Apache
 </VirtualHost>
 
 
+Sau khi Nginx đã sẵn sàng ở tiền tuyến, chúng ta tiến hành cấu hình Apache đóng vai trò "máy chủ xử lý mã nguồn" tại các cổng nội bộ 8080 (HTTP) và 8443 (HTTPS).
+Bước 1: Khởi tạo Virtual Host cho phân vùng WordPress
+
+Chúng ta tách biệt hai luồng truy cập để đảm bảo tính toàn vẹn của dữ liệu khi đi qua Proxy.''
+sudo nano /etc/apache2/sites-available/wp.phucan.vietnix.tech.conf
+
+# --- LUỒNG XỬ LÝ HTTP (PORT 8080) ---
+<VirtualHost *:8080>
+    ServerName wp.phucan.vietnix.tech
+    DocumentRoot /var/www/wp.phucan.vietnix.tech
+    
+    <Directory /var/www/wp.phucan.vietnix.tech>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+# --- LUỒNG XỬ LÝ HTTPS (PORT 8443) ---
+<VirtualHost *:8443>
+    ServerName wp.phucan.vietnix.tech
+    DocumentRoot /var/www/wp.phucan.vietnix.tech
+
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/wp.phucan.vietnix.tech/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/wp.phucan.vietnix.tech/privkey.pem
+    
+    <Directory /var/www/wp.phucan.vietnix.tech>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+Bước 2: Khởi tạo Virtual Host cho phân vùng Laravel
+
+Quy tắc đặc biệt: Đối với Laravel, cổng vào duy nhất phải là thư mục /public để bảo vệ các tập tin cấu hình hệ thống (như .env).
+
+sudo nano /etc/apache2/sites-available/laravel.phucan.vietnix.tech.conf
+# --- LUỒNG XỬ LÝ HTTP (PORT 8080) ---
+<VirtualHost *:8080>
+    ServerName laravel.phucan.vietnix.tech
+    DocumentRoot /var/www/laravel.phucan.vietnix.tech/public
+    
+    <Directory /var/www/laravel.phucan.vietnix.tech/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+# --- LUỒNG XỬ LÝ HTTPS (PORT 8443) ---
+<VirtualHost *:8443>
+    ServerName laravel.phucan.vietnix.tech
+    DocumentRoot /var/www/laravel.phucan.vietnix.tech/public
+    
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/laravel.phucan.vietnix.tech/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/laravel.phucan.vietnix.tech/privkey.pem
+    
+    <Directory /var/www/laravel.phucan.vietnix.tech/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+KÍCH HOẠT VÀ KIỂM ĐỊNH HỆ THỐNG
+
+Sau khi "xây dựng" xong các bản thiết kế, chúng ta tiến hành đưa chúng vào vận hành thực tế.
+Bash
+
+# 1. Loại bỏ cấu hình mặc định để tối ưu tài nguyên
+sudo a2dissite 000-default.conf
+
+# 2. Kích hoạt đồng thời các phân vùng dự án
+sudo a2ensite wp.phucan.vietnix.tech.conf
+sudo a2ensite laravel.phucan.vietnix.tech.conf
+
+# 3. Kiểm định tính toàn vẹn của cú pháp (Bắt buộc)
+sudo apache2ctl configtest
+
+
 
 <img width="919" height="955" alt="image" src="https://github.com/user-attachments/assets/79e0a870-025f-4512-8947-46b01af59ed1" />
 
