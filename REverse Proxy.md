@@ -10,8 +10,7 @@ Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai
     Nhằm xây dựng một hạ tầng web server tối ưu về hiệu suất và tính bảo mật, tôi tiến hành triển khai mô hình Hybrid Web Server sử dụng Nginx làm Reverse Proxy đứng trước để điều phối lưu lượng và Apache làm Backend xử lý mã nguồn. Quy trình được thực hiện từ bước đồng bộ hóa dữ liệu qua giao thức SCP, thiết lập VirtualHost đa nhiệm cho WordPress và Laravel, đồng thời cấu hình bảo mật chặn truy cập trực tiếp qua IP máy chủ.
 
     Bước 1: Đẩy mã nguồn và Database lên VPS
-
-(Chạy trên Terminal máy cậu - Máy An)
+sử data đã cung cấp sẵn ta chỉ dùng scp base qua vps 
 
 
 Đẩy mã nguồn WordPress & Laravel
