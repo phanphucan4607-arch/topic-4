@@ -1,4 +1,4 @@
-Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai
+<img width="740" height="379" alt="image" src="https://github.com/user-attachments/assets/e9dc39df-2a61-4a0b-881a-de3834ff7249" />Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai
 
 Đây là mô hình kinh điển giúp tối ưu hiệu năng:
 
@@ -334,9 +334,6 @@ sudo nano /var/www/wordpress/wp-config.php
 
 <img width="814" height="392" alt="image" src="https://github.com/user-attachments/assets/589bda3b-fff4-4968-ade2-e07b1eefc81e" />
 
-<img width="814" height="392" alt="image" src="https://github.com/user-attachments/assets/e69cb2e2-baf8-4eff-8ce5-aaf894e79893" />
-
-
 Kích hoạt và Kiểm tra
 
 Sau khi lưu file, cậu cần tạo liên kết (symlink) và khởi động lại Nginx:
@@ -445,7 +442,41 @@ Cụ thể, bộ lệnh này xử lý 3 tầng dữ liệu:
 
 Mục đích cuối cùng: Làm cho website hoạt động nhất quán trên tên miền mới phucan.vietnix.tech mà không cần phải ngồi sửa tay hàng nghìn bài viết.
 
+**Cấp quyền sở hữu (Permissions) cho thư mục Web**
+
+thực hiện lệnh mv dữ liệu từ /root/ sang /var/www/. Lúc này, toàn bộ file vẫn thuộc quyền sở hữu của user root.
+
+    Vấn đề: WordPress sẽ không thể upload ảnh, Laravel sẽ không thể ghi Log hoặc Cache (lỗi 500).
+
 và bây giờ có thể truy cập http và https được rồi 
+
+```
+sudo chown -R www-data:www-data /var/www/wp.phucan.vietnix.tech
+sudo chown -R www-data:www-data /var/www/laravel.phucan.vietnix.tech
+sudo chmod -R 755 /var/www/wp.phucan.vietnix.tech
+```
+
+ 1. Di chuyển vào thư mục dự án
+cd /var/www/laravel.phucan.vietnix.tech
+ 2. Khởi tạo file cấu hình từ file mẫu
+cp .env.example .env
+ 3. Mở file để sửa thông số Database (Sửa tay xong Ctrl+O, Enter, Ctrl+X)
+```
+nano .env
+```
+<img width="740" height="379" alt="image" src="https://github.com/user-attachments/assets/159aa29d-9e53-406c-a61a-2e819a4a0f79" />
+```
+php artisan key:generate
+php artisan config:clear
+php artisan migrate:status
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+```
+Sau khi làm xong 4 bước trên, để biết web đã thực sự "thông" chưa, ông dùng lệnh này để xem Laravel có đọc được các bảng dữ liệu không:
+php artisan migrate:status
+<img width="876" height="383" alt="image" src="https://github.com/user-attachments/assets/51ff7f70-f5d0-4b73-a038-b9f4aa83c842" />
+
+Dòng APP_KEY trong Laravel cực kỳ quan trọng. Nó dùng để mã hóa mật khẩu người dùng, mã hóa Session (đăng nhập) và Cookie. Không có chìa khóa này, Laravel sẽ từ chối hoạt động vì lý do an toàn.
 
 <img width="1808" height="510" alt="image" src="https://github.com/user-attachments/assets/5be38254-e505-4fdf-9546-03e698160d88" />
 
