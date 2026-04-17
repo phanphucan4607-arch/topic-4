@@ -57,8 +57,8 @@ sudo nano /etc/apache2/sites-available/laravel.phucan.vietnix.tech.conf
 
 2. Dán nội dung cấu hình sau:
 Apache
-
-# --- LUỒNG HTTP (Cổng 8080) ---
+```
+ # --- LUỒNG HTTP (Cổng 8080) ---
 <VirtualHost *:8080>
     ServerName laravel.phucan.vietnix.tech
     DocumentRoot /var/www/laravel.phucan.vietnix.tech/public
@@ -83,14 +83,14 @@ Apache
         Require all granted
     </Directory>
 </VirtualHost>
-
+```
 
 Sau khi Nginx đã sẵn sàng ở tiền tuyến, chúng ta tiến hành cấu hình Apache đóng vai trò "máy chủ xử lý mã nguồn" tại các cổng nội bộ 8080 (HTTP) và 8443 (HTTPS).
 Bước 1: Khởi tạo Virtual Host cho phân vùng WordPress
 
 Chúng ta tách biệt hai luồng truy cập để đảm bảo tính toàn vẹn của dữ liệu khi đi qua Proxy.''
 sudo nano /etc/apache2/sites-available/wp.phucan.vietnix.tech.conf
-
+```
 # --- LUỒNG XỬ LÝ HTTP (PORT 8080) ---
 <VirtualHost *:8080>
     ServerName wp.phucan.vietnix.tech
@@ -116,12 +116,13 @@ sudo nano /etc/apache2/sites-available/wp.phucan.vietnix.tech.conf
         Require all granted
     </Directory>
 </VirtualHost>
-
+```
 Bước 2: Khởi tạo Virtual Host cho phân vùng Laravel
 
 Quy tắc đặc biệt: Đối với Laravel, cổng vào duy nhất phải là thư mục /public để bảo vệ các tập tin cấu hình hệ thống (như .env).
 
 sudo nano /etc/apache2/sites-available/laravel.phucan.vietnix.tech.conf
+```
 # --- LUỒNG XỬ LÝ HTTP (PORT 8080) ---
 <VirtualHost *:8080>
     ServerName laravel.phucan.vietnix.tech
@@ -147,10 +148,9 @@ sudo nano /etc/apache2/sites-available/laravel.phucan.vietnix.tech.conf
         Require all granted
     </Directory>
 </VirtualHost>
+```
 KÍCH HOẠT VÀ KIỂM ĐỊNH HỆ THỐNG
-
 Sau khi "xây dựng" xong các bản thiết kế, chúng ta tiến hành đưa chúng vào vận hành thực tế.
-Bash
 
 **1. Loại bỏ cấu hình mặc định để tối ưu tài nguyên**
 sudo a2dissite 000-default.conf
