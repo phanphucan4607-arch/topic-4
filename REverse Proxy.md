@@ -326,11 +326,22 @@ server {
 }
 
 ```
+
+**cấu hình đồng bộ biến môi trường**
+```
+sudo nano /var/www/wordpress/wp-config.php
+```
+
+<img width="814" height="392" alt="image" src="https://github.com/user-attachments/assets/589bda3b-fff4-4968-ade2-e07b1eefc81e" />
+
+<img width="814" height="392" alt="image" src="https://github.com/user-attachments/assets/e69cb2e2-baf8-4eff-8ce5-aaf894e79893" />
+
+
 Kích hoạt và Kiểm tra
 
 Sau khi lưu file, cậu cần tạo liên kết (symlink) và khởi động lại Nginx:
 
-kíchkích hoạt cấu hình
+kích hoạt cấu hình
 
 sudo ln -s /etc/nginx/sites-available/wp.phucan.vietnix.tech /etc/nginx/sites-enabled/
 sudo ln -s /etc/nginx/sites-available/laravel.phucan.vietnix.tech /etc/nginx/sites-enabled/
