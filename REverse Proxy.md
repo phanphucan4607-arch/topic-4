@@ -443,9 +443,8 @@ nano .env
 
 
 <img width="740" height="379" alt="image" src="https://github.com/user-attachments/assets/159aa29d-9e53-406c-a61a-2e819a4a0f79" />
+
 ```
-
-
 php artisan key:generate
 php artisan config:clear
 php artisan migrate:status
@@ -474,22 +473,27 @@ WP-CLI là công cụ quản trị WordPress bằng dòng lệnh, giúp thực h
 
 
 **Tải tệp thực thi WP-CLI**
+
 curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 
 **Cấp quyền thực thi**
+
 chmod +x wp-cli.phar
 
 **Di chuyển vào hệ thống để sử dụng lệnh 'wp' toàn cục**
+
 sudo mv wp-cli.phar /usr/local/bin/wp
 
 
 Bước 2: Thực hiện thay đổi tên miền (Search & Replace)
 Di chuyển vào thư mục gốc của mã nguồn và thực hiện lệnh thay thế chuỗi ký tự trên toàn bộ Database.
-]
+
 **Di chuyển vào thư mục mã nguồn**
+
 cd /var/www/wp.phucan.vietnix.tech/
 
 **Thực hiện thay đổi (Lưu ý sử dụng --allow-root khi chạy với quyền root)**
+
 wp search-replace 'https://linhlt.id.vn' 'https://wp.phucan.vietnix.tech' --allow-root
 
 Bước 3: Cấu hình lại Đường dẫn tĩnh (Permalinks)
