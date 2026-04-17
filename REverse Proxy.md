@@ -548,7 +548,10 @@ curl -I http://laravel.phucan.vietnix.tech
 curl -I http://laravel.phucan.vietnix.tech
 curl -I http://wp.phucan.vietnix.tech/wp-content/themes/twentytwentyone/style.css 
 ```
-<img width="1081" height="736" alt="image" src="https://github.com/user-attachments/assets/0cc5ab3b-4fb3-419b-98a7-7503538f2ff1" />
+
+<img width="1081" height="736" alt="image" src="https://github.com/user-attachments/assets/19af79ac-a835-45ae-8ecd-4b620e0cbbce" />
+
+_Đây là bằng chứng cho thấy mô hình Hybrid (Nginx + Apache) hoạt động hoàn hảo. Nginx trực tiếp đảm nhận việc trả về các tệp tin tĩnh (CSS, JS, Hình ảnh) nhờ vào Header tùy chỉnh X-Static-Handler. Việc này giúp giảm tải hoàn toàn cho Back-end Apache, giúp hệ thống chịu tải tốt hơn_
 
 
 
