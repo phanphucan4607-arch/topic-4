@@ -1,4 +1,4 @@
-<img width="740" height="379" alt="image" src="https://github.com/user-attachments/assets/e9dc39df-2a61-4a0b-881a-de3834ff7249" />Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai
+<img width="1875" height="930" alt="image" src="https://github.com/user-attachments/assets/33d29260-26b6-4e7e-bc47-61674762530f" /><img width="740" height="379" alt="image" src="https://github.com/user-attachments/assets/e9dc39df-2a61-4a0b-881a-de3834ff7249" />Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai
 
 Đây là mô hình kinh điển giúp tối ưu hiệu năng:
 
@@ -498,29 +498,25 @@ chmod +x wp-cli.phar
 # Di chuyển vào hệ thống để sử dụng lệnh 'wp' toàn cục
 sudo mv wp-cli.phar /usr/local/bin/wp
 ```
+
 Bước 2: Thực hiện thay đổi tên miền (Search & Replace)
 
 Di chuyển vào thư mục gốc của mã nguồn và thực hiện lệnh thay thế chuỗi ký tự trên toàn bộ Database.
-```
-# Di chuyển vào thư mục mã nguồn
+**Di chuyển vào thư mục mã nguồn**
 cd /var/www/wp.phucan.vietnix.tech/
 
-# Thực hiện thay đổi (Lưu ý sử dụng --allow-root khi chạy với quyền root)
+**Thực hiện thay đổi (Lưu ý sử dụng --allow-root khi chạy với quyền root)**
 wp search-replace 'https://linhlt.id.vn' 'https://wp.phucan.vietnix.tech' --allow-root
-```
+
 Bước 3: Cấu hình lại Đường dẫn tĩnh (Permalinks)
 
 Sau khi đổi tên miền, cần làm mới tệp cấu hình đường dẫn để tránh lỗi 404 trên các trang con.
-```
+
 wp rewrite flush --allow-root
-```
 Khởi động lại các dịch vụ để đảm bảo cấu hình mới được áp dụng hoàn toàn và xóa các tệp tin hỗ trợ tạm thời.
 
-```
 sudo systemctl restart nginx
 sudo systemctl restart apache2
-```
-![Uploading image.png…]()
 
-
+<img width="1875" height="930" alt="image" src="https://github.com/user-attachments/assets/2b774623-2414-43cc-83fe-a665c6365d59" />
 
