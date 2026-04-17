@@ -1,4 +1,4 @@
-<img width="1875" height="930" alt="image" src="https://github.com/user-attachments/assets/33d29260-26b6-4e7e-bc47-61674762530f" /><img width="740" height="379" alt="image" src="https://github.com/user-attachments/assets/e9dc39df-2a61-4a0b-881a-de3834ff7249" />Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai
+ **Mô hình Hybrid (Nginx + Apache): Tận dụng sức mạnh của cả hai**
 
 Đây là mô hình kinh điển giúp tối ưu hiệu năng:
 
