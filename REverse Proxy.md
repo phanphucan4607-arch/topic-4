@@ -260,7 +260,45 @@ server {
 **Cấu hình Virtual Host cho Laravel (Coza Store)**
 sudo nano /etc/nginx/sites-available/laravel.phucan.vietnix.tech
 ```
+server {
+    listen 80;
+    server_name laravel.phucan.vietnix.tech;
+    root /var/www/laravel.phucan.vietnix.tech/public;
 
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|woff|woff2|ttf|svg)$ {
+        expires 30d;
+        try_files $uri =404;
+        access_log off;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8080/;
+        include proxy_params;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name laravel.phucan.vietnix.tech;
+    root /var/www/laravel.phucan.vietnix.tech/public;
+
+    ssl_certificate /etc/letsencrypt/live/laravel.phucan.vietnix.tech/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/laravel.phucan.vietnix.tech/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location / {
+        proxy_pass https://127.0.0.1:8443/;
+        proxy_http_version 1.1;
+        proxy_ssl_server_name on;
+        proxy_ssl_name $host;
+        proxy_ssl_verify off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
 ```
 
 **cấu hình đồng bộ biến môi trường**
@@ -269,6 +307,8 @@ sudo nano /var/www/wordpress/wp-config.php
 ```
 
 <img width="814" height="392" alt="image" src="https://github.com/user-attachments/assets/589bda3b-fff4-4968-ade2-e07b1eefc81e" />
+<img width="1859" height="166" alt="image" src="https://github.com/user-attachments/assets/3a4f9be8-84a1-454e-be50-8e27234e110f" />
+
 
 Kích hoạt và Kiểm tra
 
