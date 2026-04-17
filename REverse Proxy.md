@@ -152,14 +152,14 @@ KÍCH HOẠT VÀ KIỂM ĐỊNH HỆ THỐNG
 Sau khi "xây dựng" xong các bản thiết kế, chúng ta tiến hành đưa chúng vào vận hành thực tế.
 Bash
 
-# 1. Loại bỏ cấu hình mặc định để tối ưu tài nguyên
+**1. Loại bỏ cấu hình mặc định để tối ưu tài nguyên**
 sudo a2dissite 000-default.conf
 
-# 2. Kích hoạt đồng thời các phân vùng dự án
+ **2. Kích hoạt đồng thời các phân vùng dự án**
 sudo a2ensite wp.phucan.vietnix.tech.conf
 sudo a2ensite laravel.phucan.vietnix.tech.conf
 
-# 3. Kiểm định tính toàn vẹn của cú pháp (Bắt buộc)
+**3. Kiểm định tính toàn vẹn của cú pháp (Bắt buộc)**
 sudo apache2ctl configtest
 
 CÁCH THIẾT LẬP "TẤM KHIÊN" TRÊN NGINX
@@ -433,6 +433,10 @@ Cụ thể, bộ lệnh này xử lý 3 tầng dữ liệu:
     Tầng giao diện (Bảng postmeta): Quét sạch các link cũ còn sót lại trong cài đặt của Theme (như ảnh Logo, Banner, Slider).
 
 Mục đích cuối cùng: Làm cho website hoạt động nhất quán trên tên miền mới phucan.vietnix.tech mà không cần phải ngồi sửa tay hàng nghìn bài viết.
+
+và bây giờ có thể truy cập http và https được rồi 
+
+<img width="1808" height="510" alt="image" src="https://github.com/user-attachments/assets/5be38254-e505-4fdf-9546-03e698160d88" />
 
 <img width="1842" height="998" alt="image" src="https://github.com/user-attachments/assets/9bc9b12f-04eb-4745-80a0-7f24380f0ed4" />
 
