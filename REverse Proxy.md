@@ -270,13 +270,15 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 ```
-# Import cho Laravel
-mysql -u lara_admin -pAdmin@123 lara_admin < /path/to/your/laravel_database.sql
+1. Cho WordPress:
 
-# Import cho WordPress
-mysql -u wp_admin -pAdmin@123 wp_admin < /path/to/your/wordpress_database.sql
+# Giả sử file giải nén ra là sqlwp_db_vps.sql
+mysql -u wp_admin -pAdmin@123 wp_admin < /root/sqlwp_db_vps.sql
 
-(Thay /path/to/your/... bằng đường dẫn thực tế đến file SQL của bạn).
+2. Cho Laravel:
+
+# Giả sử file giải nén ra là sqllaravel_db_vps.sql
+mysql -u lara_admin -pAdmin@123 lara_admin < /root/sqllaravel_db_vps.sql
 ```
 3. Kết nối Code Laravel
 mở file .env
