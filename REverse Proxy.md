@@ -284,7 +284,7 @@ mysql -u lara_admin -pAdmin@123 lara_admin < /root/sqllaravel_db_vps.sql
 mở file .env
 ```
 nano /var/www/laravel.phucan.vietnix.tech/.env
-```
+
 PP_NAME=Laravel
 APP_ENV=local
 APP_KEY=base64:krHS59fq5p5L06begya3XRa7qsXuFchiZqJmmhzu6lg=
@@ -309,7 +309,7 @@ QUEUE_CONNECTION=sync
 SESSION_DRIVER=file
 SESSION_LIFETIME=120
 ```
-```
+
 ```
 # lênh dọn dẹp
 cd /var/www/laravel.phucan.vietnix.tech
