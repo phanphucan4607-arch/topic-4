@@ -43,6 +43,25 @@ mkdir -p /var/www/wp.phucan.vietnix.tech
 # Tạo thư mục chứa chứng chỉ SSL cho Nginx
 mkdir -p /etc/nginx/ssl
 ```
+```
+# Đẩy file SQL của WordPress
+scp sqlwp_db_vps.zip root@221.132.21.144:/root/
+
+# Đẩy file SQL của Laravel
+scp sqllaravel_db_vps.zip root@221.132.21.144:/root/
+
+```
+- trên vps
+```
+cd /root
+
+# Giải nén 2 file (Nếu VPS chưa có unzip thì chạy: apt install unzip -y)
+unzip sqlwp_db_vps.zip
+unzip sqllaravel_db_vps.zip
+
+# Kiểm tra xem tên file .sql sau khi giải nén là gì
+ls -lh *.sql
+```
 
 ```
 A. Đẩy toàn bộ chứng chỉ SSL:
