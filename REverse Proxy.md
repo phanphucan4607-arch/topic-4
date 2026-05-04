@@ -163,23 +163,22 @@ nano /etc/nginx/sites-available/laravel.phucan.vietnix.tech
 server {
     listen 80;
     server_name laravel.phucan.vietnix.tech;
-    return 301 https://$host$request_uri; # Tự động chuyển HTTP sang HTTPS
+    return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl http2;
     server_name laravel.phucan.vietnix.tech;
 
-    # Đường dẫn SSL (Thay đúng tên file bạn đã đẩy lên ở GĐ 2)
-    ssl_certificate     /etc/nginx/ssl/laravel.fullchain.crt;
+    # ĐÚNG TÊN FILE SSL CỦA BẠN
+    ssl_certificate     /etc/nginx/ssl/ssl.laravel.phucan.vietnix.tech.pem;
     ssl_certificate_key /etc/nginx/ssl/ssl.laravel.phucan.vietnix.tech.key;
 
-    # Tối ưu SSL
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
 
     location / {
-        proxy_pass http://127.0.0.1:8080; # Đẩy sang Apache
+        proxy_pass http://127.0.0.1:8080; 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -194,30 +193,27 @@ nano /etc/nginx/sites-available/wp.phucan.vietnix.tech
 ```
 server {
     listen 80;
-    server_name wp.phucan.vietnix.tech;
+    server_name laravel.phucan.vietnix.tech;
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name wp.phucan.vietnix.tech;
+    server_name laravel.phucan.vietnix.tech;
 
-    # Đường dẫn SSL (Thay đúng tên file bạn đã đẩy lên ở GĐ 2)
-    ssl_certificate     /etc/nginx/ssl/wp.fullchain.crt;
-    ssl_certificate_key /etc/nginx/ssl/ssl.wp.phucan.vietnix.tech.key;
+    # ĐÚNG TÊN FILE SSL CỦA BẠN
+    ssl_certificate     /etc/nginx/ssl/ssl.laravel.phucan.vietnix.tech.pem;
+    ssl_certificate_key /etc/nginx/ssl/ssl.laravel.phucan.vietnix.tech.key;
 
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
 
     location / {
-        proxy_pass http://127.0.0.1:8080; # Đẩy sang Apache
+        proxy_pass http://127.0.0.1:8080; 
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        
-        # WordPress cần thêm dòng này để không bị lỗi CSS khi chạy HTTPS qua Proxy
-        proxy_set_header X-Forwarded-Port 443;
     }
 }
 ```
