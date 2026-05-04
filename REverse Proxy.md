@@ -336,8 +336,8 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 define('WP_HOME', 'https://wp.phucan.vietnix.tech');
 define('WP_SITEURL', 'https://wp.phucan.vietnix.tech');
 ```
-5. Chốt hạ: Cấp quyền sở hữu lần cuối
-Vì Apache (Backend) sẽ là ông trực tiếp cầm file, bạn phải cho ông ấy quyền:
+5.  Cấp quyền sở hữu
+
 ```
 chown -R www-data:www-data /var/www/laravel.phucan.vietnix.tech
 chown -R www-data:www-data /var/www/wp.phucan.vietnix.tech
