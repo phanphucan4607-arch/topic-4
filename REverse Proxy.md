@@ -70,8 +70,8 @@ scp * root@221.132.21.144:/etc/nginx/ssl/
 
 ```
 B. Đẩy Source Code (giả sử bạn đã nén thành file .zip):
-scp laravel_source.zip root@221.132.21.144:/var/www/laravel.phucan.vietnix.tech/
-scp wp_source.zip root@221.132.21.144:/var/www/wp.phucan.vietnix.tech/
+scp laravel_source_vps.zip root@221.132.21.144:/var/www/laravel.phucan.vietnix.tech/
+scp wp_source_vps.zip root@221.132.21.144:/var/www/wp.phucan.vietnix.tech/
 ```
 3. Giải nén và Cấp quyền (Cửa sổ SSH trên VPS)
 ```
