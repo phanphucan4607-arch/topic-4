@@ -12,7 +12,8 @@ mbstring php8.1-xml php8.1-zip -y
 - đổi cổng: Mặc định cả 2 điều muốn giành cổng 80. chúng ta sẽ bắt Apache lùi về phí sau, chạy cổng 8080(http) 8443(hhtps)
 ```
 nano /etc/apache2/ports.cconf
-
+```
+```
 # sửa nội dung thành
 Listen 8080
 <IfModule ssl_module>
