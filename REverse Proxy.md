@@ -6,7 +6,7 @@
 apt update && apt upgrade -y
 # Cài Nginx, Apache và MySQL
 apt install nginx apache2 mysql-server php8.1-fpm php8.1 libapache2-mod-php8.1 php8.1-mysql php8.1-curl php8.1-gd php8.1-
-
+apt install nginx apache2 mysql-server php8.3-fpm php8.3 libapache2-mod-php8.3 php8.3-mysql php8.3-curl php8.3-gd
 mbstring php8.1-xml php8.1-zip -y
 ```
 - đổi cổng: Mặc định cả 2 điều muốn giành cổng 80. chúng ta sẽ bắt Apache lùi về phí sau, chạy cổng 8080(http) 8443(hhtps)
