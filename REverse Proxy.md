@@ -96,10 +96,10 @@ chown -R www-data:www-data /var/www/wp.phucan.vietnix.tech
 chmod -R 755 /var/www/
 ```
 #### Giai đoạn 3 viết cấu hình Viruahost 
-```
+
 Laravel có đặc thù là thư mục chạy phải trỏ vào /public.
 Tạo file cấu hình:
-
+```
 nano /etc/apache2/sites-available/laravel.phucan.vietnix.tech.conf
 ```
 ```
@@ -117,11 +117,11 @@ nano /etc/apache2/sites-available/laravel.phucan.vietnix.tech.conf
     CustomLog ${APACHE_LOG_DIR}/laravel_access.log combined
 </VirtualHost>
 ```
-```
+
 2. Cấu hình VirtualHost cho WordPress
 WordPress thì chạy ngay tại thư mục gốc của nó.
 Tạo file cấu hình:
-
+```
 nano /etc/apache2/sites-available/wp.phucan.vietnix.tech.conf
 ```
 ```
@@ -139,9 +139,10 @@ nano /etc/apache2/sites-available/wp.phucan.vietnix.tech.conf
     CustomLog ${APACHE_LOG_DIR}/wp_access.log combined
 </VirtualHost>
 ```
-```
+
 3. kích hoạt cấu hình module Rewrite
 Apache cần module rewrite để chạy các đường dẫn đẹp của worpress và laravel
+```
 # Kích hoạt 2 website mới
 a2ensite laravel.phucan.vietnix.tech.conf
 a2ensite wp.phucan.vietnix.tech.conf
@@ -162,11 +163,14 @@ curl -I http://localhost:8080 -H "Host: wp.phucan.vietnix.tech"
 ```
 #### Giai đoạn 4 cấu hình Nginx Reverse Proxy và SSL
 Ở giai đoạn này, chúng ta sẽ tạo 3 file cấu hình: một file cho Default Vhost (chặn truy cập lạ), một cho Laravel, và một cho WordPress.
-```
-1. Cấu hình Default Vhost (Chặn truy cập qua IP)
-Tạo file: nano /etc/nginx/sites-available/default
-Dán nội dung (chỉ để hiện trang trắng hoặc thông báo lỗi):
 
+1. Cấu hình Default Vhost (Chặn truy cập qua IP)
+Tạo file:
+```
+ nano /etc/nginx/sites-available/default
+```
+Dán nội dung (chỉ để hiện trang trắng hoặc thông báo lỗi):
+```
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -269,22 +273,23 @@ GRANT ALL PRIVILEGES ON wp_admin.* TO 'wp_admin'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
 ```
-```
-1. Cho WordPress:
 
+3. Cho đưa data lên sql WordPress:
+```
 # Giả sử file giải nén ra là sqlwp_db_vps.sql
 mysql -u wp_admin -pAdmin@123 wp_admin < /root/sqlwp_db_vps.sql
-
-2. Cho Laravel:
-
+```
+4. Cho đưa data lên sql Laravel:
+```
 # Giả sử file giải nén ra là sqllaravel_db_vps.sql
 mysql -u lara_admin -pAdmin@123 lara_admin < /root/sqllaravel_db_vps.sql
 ```
-3. Kết nối Code Laravel
+5. Kết nối Code Laravel
 mở file .env
 ```
 nano /var/www/laravel.phucan.vietnix.tech/.env
-
+```
+```
 PP_NAME=Laravel
 APP_ENV=local
 APP_KEY=base64:krHS59fq5p5L06begya3XRa7qsXuFchiZqJmmhzu6lg=
@@ -316,27 +321,28 @@ cd /var/www/laravel.phucan.vietnix.tech
 php artisan config:clear
 php artisan cache:clear
 ```
-4. Kết nối với Wordpress
+6. Kết nối với Wordpress
 ```
 nano /var/www/wp.phucan.vietnix.tech/wp-config.php
-
+```
+```
 # sửa lại các chỗ sau
 define( 'DB_NAME', 'wp_admin' );
 define( 'DB_USER', 'wp_admin' );
 define( 'DB_PASSWORD', 'Admin@123' );
 define( 'DB_HOST', 'localhost' );
 ````
-```
-# CỰC KỲ QUAN TRỌNG (Để WordPress hiểu đang chạy qua Proxy HTTPS):
-Dán đoạn này lên ngay trên dòng /* That's all, stop editing! Happy publishing. */:
 
+##### CỰC KỲ QUAN TRỌNG (Để WordPress hiểu đang chạy qua Proxy HTTPS):
+Dán đoạn này lên ngay trên dòng /* That's all, stop editing! Happy publishing. */:
+```
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
     $_SERVER['HTTPS'] = 'on';
 }
 define('WP_HOME', 'https://wp.phucan.vietnix.tech');
 define('WP_SITEURL', 'https://wp.phucan.vietnix.tech');
 ```
-5.  Cấp quyền sở hữu
+7.  Cấp quyền sở hữu
 
 ```
 chown -R www-data:www-data /var/www/laravel.phucan.vietnix.tech
