@@ -78,12 +78,12 @@ scp wp_source_vps.zip root@221.132.21.144:/var/www/wp.phucan.vietnix.tech/
 A. Giải nén Laravel:
 
 cd /var/www/laravel.phucan.vietnix.tech
-unzip laravel_source.zip
+unzip laravel_source_vps.zip
 
 B. Giải nén WordPress:
 
 cd /var/www/wp.phucan.vietnix.tech
-unzip wp_source.zip
+unzip wp_source_vps.zip
 ```
 
 C. Cấp quyền cho Apache và Nginx có thể đọc file:
