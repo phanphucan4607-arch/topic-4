@@ -194,19 +194,31 @@ server {
     listen 443 ssl http2;
     server_name laravel.phucan.vietnix.tech;
 
-    # ĐÚNG TÊN FILE SSL CỦA BẠN
+    root /var/www/laravel.phucan.vietnix.tech/public;
+    index index.php index.html;
+
     ssl_certificate     /etc/nginx/ssl/ssl.laravel.phucan.vietnix.tech.pem;
     ssl_certificate_key /etc/nginx/ssl/ssl.laravel.phucan.vietnix.tech.key;
 
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf)$ {
+        expires 30d;
+        access_log off;
+        try_files $uri =404;
+    }
+
+    location ~ \.php$ {
+        proxy_pass http://127.0.0.1:8080;
+        include proxy_params;
+        proxy_set_header X-Forwarded-Port 443;
+    }
 
     location / {
-        proxy_pass http://127.0.0.1:8080; 
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        try_files $uri $uri/ @proxy;
+    }
+
+    location @proxy {
+        proxy_pass http://127.0.0.1:8080;
+        include proxy_params;
     }
 }
 ```
