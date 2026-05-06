@@ -216,30 +216,39 @@ nano /etc/nginx/sites-available/wp.phucan.vietnix.tech
 ```
 ```
 server {
-    listen 80;
-    server_name laravel.phucan.vietnix.tech;
-    return 301 https://$host$request_uri;
-}
-
-server {
     listen 443 ssl http2;
-    server_name laravel.phucan.vietnix.tech;
+    server_name wp.phucan.vietnix.tech;
 
-    # ĐÚNG TÊN FILE SSL CỦA BẠN
-    ssl_certificate     /etc/nginx/ssl/ssl.laravel.phucan.vietnix.tech.pem;
-    ssl_certificate_key /etc/nginx/ssl/ssl.laravel.phucan.vietnix.tech.key;
+    # 1. PHẢI CÓ DÒNG NÀY: Chỉ đường cho Nginx tìm file tĩnh trên ổ cứng
+    root /var/www/wp.phucan.vietnix.tech;
+    index index.php index.html;
 
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_certificate     /etc/nginx/ssl/ssl.wp.phucan.vietnix.tech.pem;
+    ssl_certificate_key /etc/nginx/ssl/ssl.wp.phucan.vietnix.tech.key;
 
+    # 2. ĐOẠN XỬ LÝ FILE TĨNH (Nginx tự làm, không đẩy qua Apache)
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|otf)$ {
+        expires 30d;               # Cho trình duyệt lưu cache 30 ngày
+        add_header Cache-Control "public, no-transform";
+        access_log off;            # Tắt log để nhẹ máy
+        try_files $uri @proxy;      # Nếu tìm thấy file thì trả về, không thấy mới đẩy qua Apache
+    }
+
+    # 3. ĐOẠN XỬ LÝ PHP & LOGIC (Đẩy sang Apache)
     location / {
-        proxy_pass http://127.0.0.1:8080; 
+        try_files $uri $uri/ @proxy;
+    }
+
+    location @proxy {
+        proxy_pass http://127.0.0.1:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Port 443;
     }
 }
+
 ```
 4. Kiểm tra kích hoạt
 ```
